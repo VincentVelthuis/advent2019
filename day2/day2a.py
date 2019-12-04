@@ -18,4 +18,4 @@ for i in range(0,j,4):
   if opcode == 2:
     intcode[pos3]=intcode[pos1]*intcode[pos2]
 
-print(intcode)
+print(intcode[0])
