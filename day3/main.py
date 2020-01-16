@@ -1,7 +1,7 @@
 wire1 = "R8,U5,L5,D3".split(',')
-w1path = [[0,0]] #starts at origin
+#wire1 = "R75,D30,R83,U83,L12,D49,R71,U7,L72,U62,R66,U55,R34,D71,R55,D58,R83".split(',')
 wire2 = "U7,R6,D4,L4".split(',')
-w2path = [[0,0]] #starts at origin
+#wire2 = "R98,U47,R26,D63,R33,U87,L62,D20,R33,U53,R51,U98,R91,D20,R16,D67,R40,U7,R15,U6,R7".split(',')
 
 def update_path(path, direction):
   # take one step from the last coordinate of 'path'
@@ -21,25 +21,25 @@ def update_path(path, direction):
 def closest_point(path):
   coord = []
   small_dist = 123456789
-
   for x,y in path:
     if x + y < small_dist:
       small_dist = x + y
       coord = [x,y]
   return small_dist, coord
 
-for direction,distance in wire1:
-  for step in range(0,int(distance)):
-    w1path = update_path(w1path,direction)
-  #print("End w1:",direction,distance)
+def create_path(wire):
+  wpath = [[0,0]] #starts at origin
+  for command in wire:
+    direction = command[0]
+    distance = int(command[1:])
+    for step in range(distance):
+      wpath = update_path(wpath,direction)
+  return wpath[1:]  # remove origin from intersection
 
-for direction,distance in wire2:
-  for step in range(0,int(distance)):
-    w2path = update_path(w2path,direction)
-  #print("End w2:",direction,distance)
-
+w1path = create_path(wire1)
+w2path = create_path(wire2)
 intersection = [value for value in w1path if value in w2path]
-intersection = intersection[1:] # remove origin from intersection
 
 mh_dist,coord = closest_point(intersection)
-print("distance",mh_dist)
+print("dist: ",mh_dist)
+print("coord:",coord)
