@@ -4,16 +4,19 @@ wire1 = "R1004,U518,R309,D991,R436,D360,L322,U627,R94,D636,L846,D385,R563,U220,L
 wire2 = "L998,U952,R204,U266,R353,U227,L209,D718,L28,D989,R535,U517,L934,D711,R878,U268,L895,D766,L423,U543,L636,D808,L176,U493,R22,D222,R956,U347,R953,U468,R657,D907,R464,U875,L162,U225,L410,U704,R76,D985,L711,U176,R496,D720,L395,U907,R223,D144,R292,D523,R514,D942,R838,U551,L487,D518,L159,D880,R53,D519,L173,D449,R525,U645,L65,D568,R327,U667,R790,U131,R402,U869,R287,D411,R576,D265,R639,D783,R629,U107,L571,D247,L61,D548,L916,D397,R715,U138,R399,D159,L523,U2,R794,U699,R854,U731,L234,D135,L98,U702,L179,D364,R123,D900,L548,U880,R560,D648,L701,D928,R256,D970,L396,U201,L47,U156,R723,D759,R663,D306,L436,U508,R371,D494,L147,U131,R946,D207,L516,U514,R992,D592,L356,D869,L299,U10,R744,D13,L52,U749,R400,D146,L193,U720,L226,U973,R971,U691,R657,D604,L984,U652,L378,D811,L325,D714,R131,D428,R418,U750,L706,D855,L947,U557,L985,D688,L615,D114,R202,D746,R987,U353,R268,U14,R709,U595,R982,U332,R84,D620,L75,D885,L269,D544,L137,U124,R361,U502,L290,D710,L108,D254,R278,U47,R74,U293,R237,U83,L80,U661,R550,U886,L201,D527,L351,U668,R366,D384,L937,D768,L906,D388,L604,U515,R632,D486,L404,D980,L652,U404,L224,U957,L197,D496,R690,U407,L448,U953,R391,U446,L964,U372,R351,D786,L187,D643,L911,D557,R254,D135,L150,U833,R876,U114,R688,D654,L991,U717,R649,U464,R551,U886,L780,U293,L656,U681,L532,U184,L903,D42,L417,D917,L8,U910,L600,D872,L632,D221,R980,U438,R183,D973,L321,D652,L540,D163,R796,U404,L507,D495,R707,U322,R16,U59,L421,D255,L463,U462,L524,D703,L702,D904,L597,D385,L374,U411,L702,U804,R706,D56,L288".split(',')
 
 def closest_point_mh(path):
+  print("\nCalculating closest ManHattan (MH) point")
   coord = []
   small_dist = 123456789
   for x,y in tqdm(path):
     if abs(x) + abs(y) < small_dist:
       small_dist = abs(x) + abs(y)
       coord = [x,y]
+  print("Closest coord is", coord, "with MH dist", small_dist)
   return small_dist, coord
 
 def closest_point_sd(intersection, wire1, wire2):
   #signal distance for all intersected points
+  print("\nCalculating closest SignalDelay (SD) point")
   close_coord = []
   small_dist = 123456789
 
@@ -24,6 +27,7 @@ def closest_point_sd(intersection, wire1, wire2):
     if sd_dist < small_dist:
       small_dist = sd_dist
       close_coord = coord
+  print("Closest coord is", close_coord, "with SD dist", small_dist)
   return small_dist, close_coord
 
 def first_occurence(item, lst):
@@ -54,27 +58,26 @@ def create_path(wire):
         last_coord = wpath[-1]
         wpath.append([last_coord[0], last_coord[1]-1])
   return wpath[1:]  # remove origin from intersection
+
+def calc_intersection(w1path, w2path):
+  print("\nCalculating intersection.")
+  w1_set = set(tuple(x) for x in tqdm(w1path))
+  w2_set = set(tuple(y) for y in tqdm(w2path))
+
+  intersect_set = list(w1_set & w2_set)
+  # convert back to list
+  intersection = []
+  for item in intersect_set:
+    intersection.append(list(item))
   
+  print(len(intersection),"intersections found.")
+  return intersection
+
 print("Creating path for wire 1.")
 w1path = create_path(wire1)
 print("Creating path for wire 2.")
 w2path = create_path(wire2)
 
-print("Calculating intersection.")
-w1_set = set(tuple(x) for x in w1path)
-w2_set = set(tuple(y) for y in w2path)
-
-tmp_list = list(w1_set & w2_set)
-intersection = []
-for item in tmp_list:
-  intersection.append(list(item))
-
-#print(w1_setw1path).intersection(set(w2path))
-
-print("\nCalculation closest ManHattan (MH) point")
+intersection = calc_intersection(w1path, w2path)
 mh_dist,mh_coord = closest_point_mh(intersection)
-print("Closest coord is", mh_coord, "with MH dist", mh_dist)
-
-print("\nCalculation closest SignalDelay (SD) point")
 sd_dist,sd_coord = closest_point_sd(intersection, w1path, w2path)
-print("Closest coord is", sd_coord, "with SD dist", sd_dist)
