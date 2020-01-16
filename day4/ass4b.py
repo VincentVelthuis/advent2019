@@ -17,8 +17,19 @@ def rule3(num):
   #Two adjacent digits are the same (like 22 in 122345)
   for i in range(len(num)-1):
     if num[i] == num[i+1]:
-      return True
+      print(num,num[i])
+      if rule3b(num,i,num[i]):
+        next
   return False
+
+def rule3b(num, start, digit):
+  print(num, digit)
+  # the two adjacent matching digits are not part 
+  #   of a larger group of matching digits
+  for i in range(start,len(num)-2):
+    if num[i] == digit and num[i] == num[i+2]:
+      return False
+  return True
 
 def rule4(num):
   # Going from left to right, the digits never decrease;
@@ -28,14 +39,11 @@ def rule4(num):
       return False
   return True
 
+print("TESTCASES")
+print("112233:",rule3(str(112233)),"\n123444:",rule3(str(123444)),"\n111122:",rule3(str(111122)))
+'''
 n_passwords = 0
-# n_rule1, n_rule2, n_rule3, n_rule4 = (0,)*4
 for number in tqdm(range(low_lim, up_lim)):
   num =str(number)
-  #n_rule1 += rule1(num)
-  #n_rule2 += rule2(num)
-  #n_rule3 += rule3(num)
-  #n_rule4 += rule4(num)
   n_passwords += (rule4(num) and rule3(num) and rule2(num) and rule1(num))
-#print("1:",n_rule1,"2:",n_rule2,"3:",n_rule3,"4:",n_rule4)
-print(n_passwords,"possible passwords\n")
+print(n_passwords,"possible passwords\n")'''
